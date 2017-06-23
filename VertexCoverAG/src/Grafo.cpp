@@ -1,5 +1,7 @@
 #include "Grafo.h"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 Grafo::Grafo(int qtdVertices) {
@@ -138,6 +140,7 @@ void Grafo::validarIndividuo(Individuo *ind){
     /// crio o vetor com os #ids dos vertices para ordenacao
     int *vetNo = new int[this->qtdVertices];
 
+
     while(true){
         int *vetGrau = new int[this->qtdVertices];
         for(int i=0; i<this->qtdVertices; ++i){
@@ -155,6 +158,7 @@ void Grafo::validarIndividuo(Individuo *ind){
         } else {
             delete vetNo;
             delete vetGrau;
+            delete clone;
             break;
         }
         delete vetGrau;
@@ -163,29 +167,84 @@ void Grafo::validarIndividuo(Individuo *ind){
     //cout << "------------- FIM DA VALIDACAO -------------" << endl;
 }
 
-/// TODO
-int *Grafo::AlimentaIndividuo(int qtd){
-    int *vetNo = new int[this->qtdVertices];
+
+
+int Grafo::existeGrau1(){
     for(int i=0; i<this->qtdVertices; ++i){
+        if( this->grau[i] == 1){
+            return i;
+        }
+    }
+    return -1;
+}
+
+/**
+    Retorna vetor com #IDs de vertices para compor genes de um individuo
+    OBS.: pode vir repetido ex.: 0,0,1,4,3,3,-1,-1,-1
+                                             /\ valor inicial
+**/
+int *Grafo::AlimentaIndividuo(int qtd){
+
+    int *retorno = new int[this->qtdVertices];
+    int indiceRetorno = 0, geneEscolhido;
+
+    /// Clono o grafo para fazer remocoes
+    Grafo *clone = new Grafo(this->qtdVertices);
+    int i,j;
+    for( j=0; j<this->qtdVertices;j++){
+        /// preencho retorno com valores indesejados
+        retorno[j] = -1;
+        for( i=j; i<this->qtdVertices; i++ ){
+            if(this->matAdj[i][j]){
+                clone->addAresta(i,j);
+            }
+        }
+    }
+
+    /// pegar todos os vertices adjacentes aos vertices de grau 1 e jogar na solucao
+    int vGrau1 = clone->existeGrau1();
+    while(vGrau1 != -1){
+        for(i=0; i<this->qtdVertices; ++i){
+            if(clone->matAdj[vGrau1][i]){
+                retorno[indiceRetorno] = i;
+                indiceRetorno++;
+                clone->removerAresta(vGrau1,i);
+                break;
+            }
+        }
+        vGrau1 = clone->existeGrau1();
+    }
+
+    /// crio o vetor com os #ids dos vertices para ordenacao
+    int *vetNo = new int[this->qtdVertices];
+
+    /// cria o vetor com os graus dos vertices
+    int *vetGrau = new int[this->qtdVertices];
+    for(int i=0; i<this->qtdVertices; ++i){
+        vetGrau[i] = clone->grau[i];
         vetNo[i] = i;
     }
 
-    int *vetGrau = new int[this->qtdVertices];
-    for(int i=0; i<this->qtdVertices; ++i){
-        vetGrau[i] = this->grau[i];
-    }
-
+    /// ordena em ordem decrescente de grau
     this->quickSort(vetNo,vetGrau,0,this->qtdVertices-1);
 
-    cout << "OrderByGrau :";
+    for(j=0; j<qtd; j++ ){
+        geneEscolhido = rand() % int(this->qtdVertices*0.5);
+        retorno[indiceRetorno] = vetNo[geneEscolhido];
+        indiceRetorno++;
+
+    }
+    /*
+    cout << "Grau1 :";
     for(int i=0; i<this->qtdVertices; ++i){
-        cout << vetNo[i] << " ";
+        cout << retorno[i] << " ";
     }
     cout << endl;
-
+    */
     delete vetNo;
     delete vetGrau;
-    return 0;
+    delete clone;
+    return retorno;
 }
 
 void Grafo::quickSort(int *vetNo, int *vetGrau, int left, int right) {

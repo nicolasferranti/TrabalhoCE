@@ -8,10 +8,10 @@ class AlgoritmoGenetico
     public:
         AlgoritmoGenetico(int qtdVertices, Grafo *gr, int tamanhoPopulacao);
         ~AlgoritmoGenetico();
-        void gerarPopulacao();
+        void gerarPopulacao(bool metodoDeFormacao);
         void printPopulacao();
         Individuo* getIndividuo(int indice);
-        void gerarGeracoes(int qtdGeracoes, bool regularizar);
+        void gerarGeracoes(int qtdGeracoes, bool regularizar, bool crossover);
         void printMaisApto();
         void teste();
     protected:

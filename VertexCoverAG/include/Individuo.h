@@ -13,7 +13,7 @@ class Individuo
         ~Individuo();
         void preencherCaracteristicasAleatoriamente(int qtdVerticesTotal);
         void preencherCaracteristicasCompletandoTudo(int qtdVerticesTotal);
-        void preencherCaracteristicasHeuristica();
+        void preencherCaracteristicasHeuristica(int *genes, int qtdVertices);
     protected:
 
     private:

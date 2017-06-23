@@ -13,21 +13,21 @@ AlgoritmoGenetico::AlgoritmoGenetico(int qtdVertices, Grafo *gr, int tamanhoPopu
     this->tamPopulacao = tamanhoPopulacao;
 }
 
-void AlgoritmoGenetico::gerarPopulacao(){
+void AlgoritmoGenetico::gerarPopulacao(bool metodoDeFormacao){
     this->populacao = new Individuo*[this->tamPopulacao];
     Individuo *ind;
     for(int i=0; i<this->tamPopulacao; ++i){
         ind = new Individuo(this->numVertices);
-        ind->preencherCaracteristicasAleatoriamente(this->numVertices);
+        if(metodoDeFormacao){
+            ind->preencherCaracteristicasHeuristica(this->g->AlimentaIndividuo(int(this->numVertices*0.7)), this->numVertices);
+        } else {
+            ind->preencherCaracteristicasAleatoriamente(this->numVertices);
+        }
         this->populacao[i] = ind;
     }
 
     //this->g->AlimentaIndividuo(this->numVertices);
-    /*
-    ind = new Individuo(this->numVertices);
-    ind->preencherCaracteristicasCompletandoTudo(this->numVertices);
-    this->populacao[this->tamPopulacao-1] = ind;
-    */
+
 }
 
 int AlgoritmoGenetico::fitness(Individuo *i){
@@ -187,14 +187,17 @@ void AlgoritmoGenetico::crossoverDoisPontosCorteVariavel(int i1, int i2){
     }
 }
 
-void AlgoritmoGenetico::gerarGeracoes(int qtdGeracoes, bool regularizar){
+void AlgoritmoGenetico::gerarGeracoes(int qtdGeracoes, bool regularizar, bool crossover){
     int r1,r2;
     for(int i=0; i<qtdGeracoes; i++){
         for(int k=0; k< this->tamPopulacao/2; k++){
             r1 = rand() % this->tamPopulacao;
             r2 = rand() % this->tamPopulacao;
-            this->crossoverDoisPontosCorteFixo(r1,r2);
-            //this->crossoverDoisPontosCorteVariavel(r1,r2);
+            if(crossover){
+                this->crossoverDoisPontosCorteVariavel(r1,r2);
+            } else {
+                this->crossoverDoisPontosCorteFixo(r1,r2);
+            }
             this->mutacao20(r1);
             this->mutacao20(r2);
             if(regularizar){
@@ -206,7 +209,7 @@ void AlgoritmoGenetico::gerarGeracoes(int qtdGeracoes, bool regularizar){
 }
 
 void AlgoritmoGenetico::teste(){
-    this->g->validarIndividuo(this->getIndividuo(0));
+    this->g->AlimentaIndividuo(2);
 }
 
 AlgoritmoGenetico::~AlgoritmoGenetico(){

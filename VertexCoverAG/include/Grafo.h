@@ -17,12 +17,13 @@ class Grafo
         void validarIndividuo(Individuo *ind);
         int *AlimentaIndividuo(int qtd);
         void quickSort(int *vetNo,int *vetGrau, int left, int right);
+        int existeGrau1();
+        bool **matAdj;
         ~Grafo();
 
     protected:
 
     private:
-        bool **matAdj;
         int qtdVertices;
 };
 

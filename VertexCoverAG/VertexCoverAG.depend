@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1498149576 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/main.cpp
+1498229346 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/main.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -7,18 +7,20 @@
 	"Grafo.h"
 	"AlgoritmoGenetico.h"
 
-1498102073 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/include/Grafo.h
+1498161157 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/include/Grafo.h
 	"Individuo.h"
 
-1498103252 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/src/Grafo.cpp
+1498230462 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/src/Grafo.cpp
 	"Grafo.h"
 	<iostream>
+	<cstdlib>
+	<ctime>
 
 1497286938 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/individuo.h
 
 1497035952 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/Grafo.h
 
-1498103176 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/src/AlgoritmoGenetico.cpp
+1498230218 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/src/AlgoritmoGenetico.cpp
 	"AlgoritmoGenetico.h"
 	"Individuo.h"
 	"Grafo.h"
@@ -26,13 +28,13 @@
 	<cstdlib>
 	<ctime>
 
-1498149061 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/include/AlgoritmoGenetico.h
+1498230250 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/include/AlgoritmoGenetico.h
 	"Individuo.h"
 	"Grafo.h"
 
-1498079682 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/include/Individuo.h
+1498228940 /home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/include/Individuo.h
 
-1498096756 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/src/Individuo.cpp
+1498228926 source:/home/nicolas/Documentos/Trabalho_comp_ev/VertexCoverAG/src/Individuo.cpp
 	"Individuo.h"
 	<cstdlib>
 	<ctime>

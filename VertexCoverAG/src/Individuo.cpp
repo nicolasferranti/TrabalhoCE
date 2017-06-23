@@ -34,7 +34,17 @@ void Individuo::preencherCaracteristicasCompletandoTudo(int qtdVerticesTotal){
 }
 
 /// TODO
-void Individuo::preencherCaracteristicasHeuristica(){
+void Individuo::preencherCaracteristicasHeuristica(int *genes, int qtdVertices){
+    int i;
+    for(i=0; i< qtdVertices; ++i){
+        this->vetVertices[i] = false;
+    }
+    for(i=0; genes[i]!= -1; ++i){
+        if( !this->vetVertices[genes[i]] ){
+            this->vetVertices[genes[i]] = true;
+            this->qtdVerticesNaSolucao++;
+        }
+    }
 }
 
 void Individuo::printIndividuo(int qtdVerticesTotal){
