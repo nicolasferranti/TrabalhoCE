@@ -227,7 +227,6 @@ int *Grafo::AlimentaIndividuo(int qtd){
 
     /// ordena em ordem decrescente de grau
     this->quickSort(vetNo,vetGrau,0,this->qtdVertices-1);
-
     for(j=0; j<qtd; j++ ){
         geneEscolhido = rand() % int(this->qtdVertices*0.5);
         retorno[indiceRetorno] = vetNo[geneEscolhido];

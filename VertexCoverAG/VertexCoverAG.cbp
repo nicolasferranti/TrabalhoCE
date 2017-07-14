@@ -42,7 +42,6 @@
 		<Unit filename="src/AlgoritmoGenetico.cpp" />
 		<Unit filename="src/Grafo.cpp" />
 		<Unit filename="src/Individuo.cpp" />
-		<Unit filename="src/individuo.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -10,7 +10,7 @@ using namespace std;
 int main()
 {
     int op = -1;
-    int qtdVertices,tamanhoPopulacao = 80;
+    int qtdVertices,tamanhoPopulacao = 60;
     int melhorCobertura;
     int c1,c2;
     Grafo *g = NULL;
@@ -42,10 +42,12 @@ int main()
                 cout << "-------------" << endl;
                 g->printGrau();
                 cout << "-------------" << endl;
-                ag = new AlgoritmoGenetico(qtdVertices,g,1);
-                ag->gerarPopulacao(true);
+                ag = new AlgoritmoGenetico(qtdVertices,g,5);
+                ag->gerarPopulacao(false);
                 //ag->teste();
                 //ag->printPopulacao();
+                ag->gerarGeracoes(5,false,true,true,false);
+                //ag->teste();
                 ag->printMaisApto();
                 //ag->gerarGeracoes(2,true);
                 cout << "EOGERACOES" << endl;
@@ -70,7 +72,7 @@ int main()
                 ag->gerarPopulacao(false);
                 cout << "------------- Iniciando AG -------------" << endl;
                 ag->printMaisApto();
-                ag->gerarGeracoes(200,true,true);
+                ag->gerarGeracoes(200,true,true,false,false);
                 ag->printMaisApto();
                 cout << "------------- Melhor Cobertura :"<< melhorCobertura <<"-------------" << endl;
                 delete ag;
@@ -89,10 +91,10 @@ int main()
                 ag = new AlgoritmoGenetico(qtdVertices,g,tamanhoPopulacao);
                 ag->gerarPopulacao(true);
                 cout << "------------- Iniciando AG -------------" << endl;
-                ag->printMaisApto();
-                ag->gerarGeracoes(100,true,true);
+                //ag->printMaisApto();
+                ag->gerarGeracoes(1000,true,true,true,false);
                 //ag->teste();
-                ag->printMaisApto();
+                //ag->printMaisApto();
                 cout << "------------- Melhor Cobertura :"<< melhorCobertura <<"-------------" << endl;
                 delete ag;
                 break;
@@ -110,7 +112,7 @@ int main()
             -> (OK)   Dois Pontos Variavel
         Roleta CrossOver:
             -> (OK)   Aleatoria
-            -> (TODO) Aleatoria com maior probabilidade para menores fitness
+            -> (OK) Aleatoria com maior probabilidade para menores fitness
         Mutação:
             -> (OK)   20% Aleatoria
         Regularizar Individuo:

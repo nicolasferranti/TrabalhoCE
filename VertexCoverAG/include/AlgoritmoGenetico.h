@@ -11,14 +11,18 @@ class AlgoritmoGenetico
         void gerarPopulacao(bool metodoDeFormacao);
         void printPopulacao();
         Individuo* getIndividuo(int indice);
-        void gerarGeracoes(int qtdGeracoes, bool regularizar, bool crossover);
+        void gerarGeracoes(int qtdGeracoes, bool regularizar, bool crossoverVariavel, bool roletaFitness,bool mutaMelhores);
         void printMaisApto();
         void teste();
     protected:
 
     private:
+        Individuo *melhor;
+        void setarMelhor();
+        void printarMelhor();
         int fitness(Individuo *i);
-        void mutacao20(int indice);
+        void mutacao20(int indice, bool soMelhores );
+        int acessoReproducao();
         void crossoverDoisPontosCorteVariavel(int i1, int i2);
         void crossoverDoisPontosCorteFixo(int i1,int i2);
         Individuo **populacao;

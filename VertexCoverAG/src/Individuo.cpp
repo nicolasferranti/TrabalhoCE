@@ -49,11 +49,13 @@ void Individuo::preencherCaracteristicasHeuristica(int *genes, int qtdVertices){
 
 void Individuo::printIndividuo(int qtdVerticesTotal){
     cout << "------------- Qtd Vertices na solucao: "<< this->qtdVerticesNaSolucao <<" -------------" << endl;
+    /*
     cout << "Genes : ";
     for(int i=0; i<qtdVerticesTotal; ++i){
         cout << this->vetVertices[i] << " ";
     }
     cout << endl;
+    */
 }
 
 void Individuo::setQtdVertices(int qtdVertices){

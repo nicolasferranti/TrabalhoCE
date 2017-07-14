@@ -11,6 +11,7 @@ AlgoritmoGenetico::AlgoritmoGenetico(int qtdVertices, Grafo *gr, int tamanhoPopu
     this->numVertices = qtdVertices;
     this->g = gr;
     this->tamPopulacao = tamanhoPopulacao;
+    this->melhor = NULL;
 }
 
 void AlgoritmoGenetico::gerarPopulacao(bool metodoDeFormacao){
@@ -48,14 +49,14 @@ void AlgoritmoGenetico::printMaisApto(){
         if( this->fitness(ind) > this->fitness(this->populacao[i]))
             ind = this->populacao[i];
     }
-    bool valido = this->g->ehValida(ind);
-    cout << "------------- Mais apto -------------" << endl;
-    cout << "------------- Fitness :"<< this->fitness(ind) <<"-------------" << endl;
-    if(valido){
-        cout << "------------- Valido? : Sim -------------" << endl;
-    } else {
-        cout << "------------- Valido? : Nao -------------" << endl;
-    }
+    //bool valido = this->g->ehValida(ind);
+    //cout << "------------- Mais apto -------------" << endl;
+    //cout << "------------- Fitness :"<< this->fitness(ind) <<"-------------" << endl;
+    //if(valido){
+    //    cout << "------------- Valido? : Sim -------------" << endl;
+    //} else {
+    //    cout << "------------- Valido? : Nao -------------" << endl;
+    //}
     ind->printIndividuo(this->numVertices);
 
 }
@@ -67,7 +68,7 @@ Individuo* AlgoritmoGenetico::getIndividuo(int indice){
     return NULL;
 }
 
-void AlgoritmoGenetico::mutacao20(int indice){
+void AlgoritmoGenetico::mutacao20(int indice, bool soMelhores){
     if( indice > -1 && indice < this->tamPopulacao){
         int vintepct = this->numVertices / 5;
         int indiceMuta;
@@ -89,10 +90,14 @@ void AlgoritmoGenetico::mutacao20(int indice){
             this->populacao[indice]->vetVertices[indiceMuta] = (!this->populacao[indice]->vetVertices[indiceMuta]);
         }
 
-        if( this->fitness(ind) < this->fitness(this->populacao[indice])){
-            Individuo *old = this->populacao[indice];
-            this->populacao[indice] = ind;
-            delete old;
+        if(!soMelhores){
+            delete ind;
+        } else {
+            if( this->fitness(ind) < this->fitness(this->populacao[indice])){
+                Individuo *old = this->populacao[indice];
+                this->populacao[indice] = ind;
+                delete old;
+            }
         }
     }
 }
@@ -172,6 +177,7 @@ void AlgoritmoGenetico::crossoverDoisPontosCorteVariavel(int i1, int i2){
         vetI[2] = i3;
         vetI[3] = i4;
 
+
         for(int b=0; b<4; b++ ){
             for( i=b+1; i<4; i++){
                 if(this->fitness(vetI[b]) > this->fitness(vetI[i]) ){
@@ -182,34 +188,136 @@ void AlgoritmoGenetico::crossoverDoisPontosCorteVariavel(int i1, int i2){
             }
         }
 
+
         this->populacao[i1] = vetI[0];
         this->populacao[i2] = vetI[1];
+
+        ///teste
+        //this->populacao[i1] = vetI[2];
+        //this->populacao[i2] = vetI[3];
+
     }
 }
 
-void AlgoritmoGenetico::gerarGeracoes(int qtdGeracoes, bool regularizar, bool crossover){
-    int r1,r2;
-    for(int i=0; i<qtdGeracoes; i++){
-        for(int k=0; k< this->tamPopulacao/2; k++){
-            r1 = rand() % this->tamPopulacao;
-            r2 = rand() % this->tamPopulacao;
-            if(crossover){
-                this->crossoverDoisPontosCorteVariavel(r1,r2);
-            } else {
-                this->crossoverDoisPontosCorteFixo(r1,r2);
-            }
-            this->mutacao20(r1);
-            this->mutacao20(r2);
-            if(regularizar){
-                this->g->validarIndividuo(this->getIndividuo(r1));
-                //this->g->validarIndividuo(this->getIndividuo(r2));
-            }
+int AlgoritmoGenetico::acessoReproducao(){
+    int i, maiorFitness = this->fitness(this->populacao[0]);
+    int aux;
+    int *vetFit = new int[this->tamPopulacao];
+
+    /// armazena o maior fitness para fazer a roleta
+    for(i=0; i<this->tamPopulacao; ++i){
+        aux = this->fitness(this->populacao[i]);
+        vetFit[i] = aux;
+        if( aux > maiorFitness){
+            maiorFitness = aux;
+        }
+    }
+    //cout << "------------- maiorFitness: "<< maiorFitness <<" -------------" << endl;
+    /// somatorio de todos os inversos de fitness para determinar a prob do individuo ser sorteado
+    aux = 0;
+    for(i=0; i<this->tamPopulacao; ++i){
+        aux += maiorFitness/vetFit[i];
+    }
+    int fitSorteado = rand() % aux;
+    //cout << "------------- sorted: "<< fitSorteado <<" -------------" << endl;
+    aux = 0;
+    for(i=0; i<this->tamPopulacao; ++i){
+        aux += (maiorFitness/vetFit[i]);
+        //cout << "------------- aux(margem): "<< aux <<" -------------" << endl;
+        if( fitSorteado < aux){
+            //cout << "------------- escolhido: "<< i <<" -------------" << endl;
+            delete []vetFit;
+            return i;
         }
     }
 }
 
+
+void AlgoritmoGenetico::setarMelhor(){
+    Individuo *melhorGeracao = this->populacao[0];
+    int i;
+
+    for(i=1; i<this->tamPopulacao; ++i){
+        if( this->fitness(melhorGeracao) > this->fitness(this->populacao[i])){
+            melhorGeracao = this->populacao[i];
+        }
+    }
+
+    if(this->melhor != NULL && this->fitness(this->melhor) > this->fitness(melhorGeracao)){
+        delete(this->melhor);
+        this->melhor = NULL;
+    }
+
+    if( this->melhor == NULL){
+        this->melhor = new Individuo(this->numVertices);
+        this->melhor->qtdVerticesNaSolucao = melhorGeracao->qtdVerticesNaSolucao;
+        for(i=0; i<this->numVertices; ++i){
+            this->melhor->vetVertices[i] = melhorGeracao->vetVertices[i];
+        }
+    }
+}
+
+void AlgoritmoGenetico::printarMelhor(){
+    cout << "------------- Melhor -------------" << endl;
+    this->melhor->printIndividuo(this->numVertices);
+
+}
+
+void AlgoritmoGenetico::gerarGeracoes(int qtdGeracoes, bool regularizar, bool crossoverVariavel, bool roletaFitness, bool mutaMelhores){
+    int r1,r2, contadorSorte;
+    srand(time(NULL));
+    for(int i=0; i<qtdGeracoes; i++){
+        cout << "------------- Geracao " << i << " -------------" << endl;
+        this->printMaisApto();
+        for(int k=0; k< this->tamPopulacao/2; k++){
+            if(roletaFitness){
+                r1 = this->acessoReproducao();
+                r2 = this->acessoReproducao();
+                if( r1 == r2){
+                    for(contadorSorte=0; contadorSorte<5; ++contadorSorte){
+                        r2 = this->acessoReproducao();
+                        if( r1 != r2){
+                            break;
+                        }
+                    }
+                    if( r1 == r2){
+                        if(r1 == 0){
+                            r2 = r1+1;
+                        } else {
+                            r2 = r1-1;
+                        }
+                    }
+                }
+            } else {
+                r1 = rand() % this->tamPopulacao;
+                r2 = rand() % this->tamPopulacao;
+            }
+            if(crossoverVariavel){
+                this->crossoverDoisPontosCorteVariavel(r1,r2);
+            } else {
+                this->crossoverDoisPontosCorteFixo(r1,r2);
+            }
+            if(mutaMelhores){
+                this->mutacao20(r1,true);
+                this->mutacao20(r2,true);
+            } else {
+                this->mutacao20(r1,false);
+                this->mutacao20(r2,false);
+            }
+            if(regularizar){
+                this->g->validarIndividuo(this->getIndividuo(r1));
+                this->g->validarIndividuo(this->getIndividuo(r2));
+            }
+        }
+        this->setarMelhor();
+    }
+    this->printarMelhor();
+}
+
 void AlgoritmoGenetico::teste(){
-    this->g->AlimentaIndividuo(2);
+    for(int i=0; i< 3; i++){
+        this->acessoReproducao();
+    }
 }
 
 AlgoritmoGenetico::~AlgoritmoGenetico(){
